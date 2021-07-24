@@ -1,19 +1,19 @@
 `timescale 1ns/1ns
 
-`include "dmem.v"
+`include "dataMem.v"
 
-module tb_dmem();
+module tb_dataMem();
 	reg reset;
 	reg [21:0] address;
 	reg [31:0] dataIn;
 	reg writeEnable;
 	wire [31:0] dataOut;
 
-	dmem _dmem(reset, address, dataIn, writeEnable, dataOut);
+	dataMem _dataMem(reset, address, dataIn, writeEnable, dataOut);
 
 	initial begin
 		$dumpfile("test.vcd");
-		$dumpvars(-1, _dmem);
+		$dumpvars(-1, _dataMem);
 
 		// 2. memory write
 		   address = 0;

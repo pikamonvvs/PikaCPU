@@ -1,5 +1,5 @@
 $date
-	Thu Jul 22 13:16:35 2021
+	Sat Jul 24 00:47:43 2021
 $end
 $version
 	Icarus Verilog
@@ -7,37 +7,55 @@ $end
 $timescale
 	1ns
 $end
-$scope module tb_dmem $end
-$scope module _dmem $end
-$var wire 22 ! address [21:0] $end
-$var wire 32 " dataIn [31:0] $end
-$var wire 32 # dataOut [31:0] $end
-$var wire 1 $ reset $end
-$var wire 1 % writeEnable $end
-$var integer 32 & i [31:0] $end
+$scope module tb_instrMem $end
+$scope module _instrMem $end
+$var wire 22 ! addr [21:0] $end
+$var wire 32 " data_out [31:0] $end
+$var wire 1 # reset $end
+$var integer 32 $ i [31:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 #0
 $dumpvars
-bx &
-x%
-x$
-bx #
+bx $
+x#
 bx "
-b0 !
+bx !
 $end
 #1
-1%
+1#
 #2
-b1 #
-b1 "
+b100000000 $
+0#
+#3
+b11111111 "
+b0 !
 #4
-0%
+b11111110 "
+b1 !
 #5
-1$
+b11111101 "
+b10 !
 #6
-b0 #
-b10000000000 &
-0$
+b11111100 "
+b11 !
 #7
+b11111011 "
+b100 !
+#8
+b11111010 "
+b101 !
+#9
+b11111001 "
+b110 !
+#10
+b11111000 "
+b111 !
+#11
+b11110111 "
+b1000 !
+#12
+b0 "
+b11111111 !
+#13
