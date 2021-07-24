@@ -3,12 +3,13 @@
 
 `include "defines.v"
 
-module alu(val1, val2, aluop, is_alu_op, result);
-	input [31:0] val1;
-	input [31:0] val2;
-	input [4:0] aluop;
-	input is_alu_op;
-	output [31:0] result;
+module alu(
+	input [31:0] val1,
+	input [31:0] val2,
+	input [4:0] aluop,
+	input is_alu_op,
+	output reg [31:0] result // FIXME:
+	);
 
 	always @ (*) begin
 		if (is_alu_op) begin
@@ -28,9 +29,9 @@ module alu(val1, val2, aluop, is_alu_op, result);
 				`ALUOP_ASR:  result <= val1 >> val2; // TODO: algorithm
 
 				`ALUOP_MOV:  result <= val1;
-				`ALUOP_MOVL: result <= (val2 & 0x0000ffff);
-				`ALUOP_MOVH: result <= (val2 & 0xffff0000); // TODO: scenario
-				default; result <= 0;
+				`ALUOP_MOVL: result <= val2[15:0];
+				`ALUOP_MOVH: result <= val2[31:16]; // TODO: scenario
+				default: result <= 0;
 			endcase
 		end
 		else begin

@@ -1,15 +1,15 @@
-//`ifndef __DATAMEM_V__
-//`define __DATAMEM_V__
+`ifndef __DATAMEM_V__
+`define __DATAMEM_V__
 
-`define DMEM_SIZE 256 // maximum 131072
-`define DMEM_BITS 22
+`include "defines.v"
 
-module dataMem(reset, address, dataIn, writeEnable, dataOut);
-	input reset;
-	input [`DMEM_BITS-1:0] address; // 2MB
-	input [31:0] dataIn;
-	input writeEnable;
-	output [31:0] dataOut;
+module dataMem(
+	input reset,
+	input [31:0] address,
+	input [31:0] dataIn,
+	input writeEnable,
+	output [31:0] dataOut
+	);
 
 	reg [31:0] memory[0:`DMEM_SIZE-1];
 	integer i;
@@ -21,7 +21,7 @@ module dataMem(reset, address, dataIn, writeEnable, dataOut);
 		end
 		else begin
 			if (writeEnable) begin
-				memory[address] <= dataIn;
+				memory[address[`DMEM_BITS-1:0]] <= dataIn;
 			end
 		end
 	end
@@ -30,4 +30,4 @@ module dataMem(reset, address, dataIn, writeEnable, dataOut);
 
 endmodule // dataMem
 
-//`endif /*__DATAMEM_V__*/
+`endif /*__DATAMEM_V__*/

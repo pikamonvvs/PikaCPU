@@ -1,15 +1,22 @@
 `ifndef __FETCH_V__
 `define __FETCH_V__
 
-module fetch(clk, reset, instruction, imem_addr, imem_data, pc_in, pc_out);
-	input clk, reset;
-	output [31:0] instruction;
-	// instrMem
-	output [21:0] imem_addr;
-	input [31:0] imem_data;
-	// regFile
-	input [31:0] pc_in;
-	output [31:0] pc_out;
+module fetch(
+	input clk,
+	input reset,
+	output [31:0] instruction,
+
+	// to instrMem
+	output [21:0] imem_addr,
+	input [31:0] imem_data,
+
+	// to regFile
+	input [31:0] pc_in,
+	output reg [31:0] pc_out, // FIXME:
+
+	//to execute
+	input taken
+	);
 
 	always @ (posedge clk or negedge reset) begin
 		if (!reset)
@@ -18,7 +25,8 @@ module fetch(clk, reset, instruction, imem_addr, imem_data, pc_in, pc_out);
 		end
 		else
 		begin
-			pc_out <= pc_in + 4;
+			if (!taken)
+				pc_out <= pc_in + 4;
 		end
 	end
 

@@ -1,13 +1,13 @@
-//`ifndef __INSTRMEM_V__
-//`define __INSTRMEM_V__
+`ifndef __INSTRMEM_V__
+`define __INSTRMEM_V__
 
-`define IMEM_SIZE 256 // maximum 131072
-`define IMEM_BITS 22
+`include "defines.v"
 
-module instrMem(reset, addr, data_out);
-	input reset;
-	input [`IMEM_BITS-1:0] addr; // 2MB
-	output [31:0] data_out;
+module instrMem(
+	input reset,
+	input [`IMEM_BITS-1:0] addr, // 2MB
+	output [31:0] data_out
+	);
 
 	reg [31:0] memory[0:`IMEM_SIZE-1];
 	integer i;
@@ -24,4 +24,4 @@ module instrMem(reset, addr, data_out);
 
 endmodule // instrMem
 
-//`endif /*__INSTRMEM_V__*/
+`endif /*__INSTRMEM_V__*/

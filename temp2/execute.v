@@ -5,49 +5,54 @@
 `include "alu.v"
 `include "condChecker.v"
 
-module execute();
-	input [5:0] opcode;
-	input [3:0] rd, rs, rt, cond;
-	input [17:0] imm;
-	input [21:0] md;
+module execute(
+	// fields
+	input [5:0] opcode,
+	input [3:0] rd, rs, rt, cond,
+	input [17:0] imm,
+	input [21:0] md,
 
-	input is_alu_op;
-	input is_cmp_op;
-	input is_jmp_op;
-	input is_ld_op;
-	input is_str_op;
-	input is_proc_op;
-	input is_src2_imm;
+	// flags
+	input is_alu_op,
+	input is_cmp_op,
+	input is_jmp_op,
+	input is_ld_op,
+	input is_str_op,
+	input is_call_op,
+	input is_ret_op,
+	input is_src2_imm,
 
-	output [3:0] rs_num;
-	output [3:0] rt_num;
-	input [31:0] rs_val;
-	input [31:0] rt_val;
+	// to regFile
+	output [3:0] rd_num, //
+	output [3:0] rs_num,
+	output [3:0] rt_num,
+	input [31:0] rd_val, //
+	input [31:0] rs_val,
+	input [31:0] rt_val,
 
-	output [3:0] rd_num;
-	input [31:0] rd_val;
-
-	// alu
-	output [31:0] result;
-	// compare
-	output [31:0] cpsr_out;
-	// branch
-	input [31:0] cpsr_in; // TODO:
-	output taken;
+	// to alu
+	output [31:0] result,
+	// to comparator
+	output [31:0] cpsr_out,
+	// to condChecker
+	input [31:0] cpsr_in, // TODO:
+	output taken,
 
 	// pass-through
-	output [3:0] rd_num_passthrough; // alu
-	output [31:0] rd_val_passthrough; // alu
-	output [31:0] md_passthrough;
-	output is_alu_op_passthrough;
-	output is_cmp_op_passthrough;
-	output is_jmp_op_passthrough;
-	output is_ld_op_passthrough;
-	output is_str_op_passthrough;
+	output [3:0] rd_num_passthrough, // alu
+	output [31:0] rd_val_passthrough, // alu
+	output [31:0] md_passthrough,
+	output is_alu_op_passthrough,
+	output is_cmp_op_passthrough,
+	output is_jmp_op_passthrough,
+	output is_ld_op_passthrough,
+	output is_str_op_passthrough
+	);
 
 	wire [31:0] val1, val2;
 	wire [31:0] imm32;
 	wire [31:0] md32;
+	wire [3:0] nzcv;
 
 	// TODO: postition of operand differ according to instruction
 	assign rs_num = rs;
@@ -58,17 +63,21 @@ module execute();
 	assign rd_num = rd;		// need to pass for ld
 	assign val0 = rd_val;	// need to pass for str
 
+	assign cpsr_out = { 28'd0, nzcv };
+
 	signExtendImm _signExtendImm(
 		.in(imm),
 		.out(imm32)
 	);
 
-	signExtendMd _signExtendMd( // TODO: necessity
+	signExtendMd _signExtendMd(
 		.in(md),
 		.out(md32)
 	);
 
 	// alu
+	wire [4:0] aluop;
+	assign aluop = (is_alu_op) ? opcode[5:1] : 0;
 	alu _alu(
 		.is_alu_op(is_alu_op),
 		.val1(val1),
@@ -78,20 +87,17 @@ module execute();
 	);
 
 	// compare
-	wire [3:0] nzcv;
 	comparator _comparator(
 		.is_cmp_op(is_cmp_op),
 		.val1(val1),
 		.val2(val2), // TODO: rr ri
 		.nzcv(nzcv)
 	);
-	assign cpsr_out = { 28'd0, nzcv };
 
 	// branch
-	wire taken;
 	condChecker _condChecker(
 		.is_jmp_op(is_jmp_op),
-		.cpsr(cpsr),
+		.cpsr_in(cpsr_in[3:0]),
 		.cond(cond),
 		.taken(taken)
 	);
